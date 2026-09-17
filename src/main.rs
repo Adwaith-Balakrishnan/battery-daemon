@@ -1,3 +1,6 @@
+// Hide the console window on Windows; has no effect on other platforms
+#![windows_subsystem = "windows"]
+
 pub mod shared;
 pub mod os;
 pub mod daemon;
