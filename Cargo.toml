@@ -24,3 +24,4 @@ windows = { version = "0.58", features = [
 product-name = "Battery Daemon"
 identifier = "com.adwaithbalakrishnan.batterydaemon"
 copyright = "Copyright 2026 Adwaith Balakrishnan"
+icons = ["icons/icon.png", "icons/icon.ico"]
