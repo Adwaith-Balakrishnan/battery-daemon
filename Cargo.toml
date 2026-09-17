@@ -2,6 +2,8 @@
 name = "battery-daemon"
 version = "0.1.0"
 edition = "2021"
+description = "Cross-platform background battery monitor"
+authors = ["Adwaith Balakrishnan"]
 
 [dependencies]
 tray-icon = "0.24"
