@@ -32,7 +32,7 @@ fn main() {
         let mut msg = MSG::default();
         // GetMessageW blocks until a window event happens (like clicking our tray menu)
         while GetMessageW(&mut msg, None, 0, 0).into() {
-            TranslateMessage(&msg);
+            let _ = TranslateMessage(&msg);
             DispatchMessageW(&msg);
 
             // Check if the user interacted with our specific context menu items

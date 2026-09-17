@@ -6,7 +6,7 @@ pub struct BatteryStatus {
 
 #[derive(Debug)]
 pub enum BatteryError {
-    OsQueryFailed,
+    OsQueryFailed(String),
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]

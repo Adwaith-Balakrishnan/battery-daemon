@@ -6,9 +6,9 @@ use tray_icon::{Icon, TrayIcon, TrayIconBuilder};
 pub struct TrayManager {
     // We must keep a reference to the tray icon alive; if dropped, the icon vanishes from the taskbar.
     _tray_icon: TrayIcon,
-    pause_id: muda::Id,
-    resume_id: muda::Id,
-    quit_id: muda::Id,
+    pause_id: muda::MenuId,
+    resume_id: muda::MenuId,
+    quit_id: muda::MenuId,
 }
 
 impl TrayManager {
@@ -22,7 +22,7 @@ impl TrayManager {
             .unwrap();
 
         // Programmatically generate a 16x16 solid blue icon (RGBA) so the app runs instantly
-        let icon_bytes = vec![0, 120, 255, 255; 16 * 16 * 4]; 
+        let icon_bytes = [0, 120, 255, 255].repeat(16 * 16); 
         let icon = Icon::from_rgba(icon_bytes, 16, 16).unwrap();
 
         let tray_icon = TrayIconBuilder::new()
