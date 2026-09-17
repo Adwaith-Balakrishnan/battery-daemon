@@ -21,5 +21,4 @@ windows = { version = "0.58", features = [
 [package.metadata.packager]
 product-name = "Battery Daemon"
 identifier = "com.adwaithbalakrishnan.batterydaemon"
-copyright = "Copyright © 2026 Adwaith Balakrishnan"
-icons = ["icons/icon.icns", "icons/icon.ico", "icons/icon.png"]
+copyright = "Copyright 2026 Adwaith Balakrishnan"
