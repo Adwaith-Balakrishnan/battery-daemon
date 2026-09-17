@@ -3,46 +3,52 @@ pub mod os;
 pub mod daemon;
 pub mod tray;
 
-use os::windows::WindowsProvider;
+use os::ActiveProvider;
 use shared::DaemonCommand;
 use std::sync::mpsc;
 use std::thread;
+
+// Isolate Windows-only imports
+#[cfg(target_os = "windows")]
 use windows::Win32::UI::WindowsAndMessaging::{
     DispatchMessageW, GetMessageW, TranslateMessage, MSG,
 };
 
 fn main() {
-    // 1. Establish the IPC communication channels
     let (tx, rx) = mpsc::channel::<DaemonCommand>();
 
-    // 2. Instantiate our hardware/notification provider
-    let provider = WindowsProvider::new();
+    // 2. Instantiate the hardware/notification provider dynamically based on the OS
+    let provider = ActiveProvider::new();
 
-    // 3. Spawn Thread A (The Engine) and pass ownership of the hardware provider and receiver channel
     let daemon_handle = thread::spawn(move || {
         daemon::poller::run_loop(provider, rx);
     });
 
-    // 4. Initialize the Tray System on the Main Thread (Thread B)
     let tray_manager = tray::TrayManager::new();
 
-    // 5. Run a native Win32 Message Pump. 
-    // This blocks the main thread efficiently, waking up only when the user interacts with the tray.
+    // 5a. Native Win32 Message Pump (Windows Only)
+    #[cfg(target_os = "windows")]
     unsafe {
         let mut msg = MSG::default();
-        // GetMessageW blocks until a window event happens (like clicking our tray menu)
         while GetMessageW(&mut msg, None, 0, 0).into() {
             let _ = TranslateMessage(&msg);
             DispatchMessageW(&msg);
 
-            // Check if the user interacted with our specific context menu items
             if tray_manager.handle_events(&tx) {
-                break; // Exit loop if 'Quit' was selected
+                break; 
             }
         }
     }
 
-    // 6. Graceful Cleanup: Wait for the daemon thread to finish executing its shutdown tasks before closing
+    // 5b. Standard Polling Loop (macOS / Linux)
+    #[cfg(not(target_os = "windows"))]
+    loop {
+        std::thread::sleep(std::time::Duration::from_millis(100));
+        if tray_manager.handle_events(&tx) {
+            break;
+        }
+    }
+
     daemon_handle.join().unwrap();
     println!("Application shut down cleanly.");
 }
